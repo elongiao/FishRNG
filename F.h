@@ -41,14 +41,8 @@ namespace F{ // 成就计算区
 		const string success="包含2个“0”";
 		bool ck(int x){
             if(!~x) return false;
-            int fl=0;description="";
-            const string s=to_string(x);
+            int fl=0;
 			while(x) fl+=!(x%10),x/=10;
-            for(char ch:s){
-                description+=(ch=='0'?"|":" ");
-                description+=ch;
-                description+=(ch=='0'?"|":" ");
-            }
 			return (fl>=2);
 		}
 		rval suc(){ return {rarity_d,description,success}; }
