@@ -125,6 +125,7 @@ bool cmpAccom(rval x,rval y){
 }
 
 void workAccom(int accomID,string acName){
+	accom.clear();	
 	accomName[accomID]=acName;
 	global=-1;
 	make_check();
@@ -133,7 +134,6 @@ void workAccom(int accomID,string acName){
 	sort(searchContent[accomID].begin(),
 		 searchContent[accomID].end(),
 		 cmpAccom);
-	accom.clear();	
 }
 void initAccomSearch(){
 	flag_zero=1; workAccom(0,"0 相关成就"); 
