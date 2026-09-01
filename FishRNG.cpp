@@ -11,6 +11,7 @@
 #define isOnEnter ((GetAsyncKeyState(VK_RETURN)&0x8000))
 // #define showRankOfNumber 0
 // #define usePublicHandle 0
+#define accomSearcher 0
 
 using namespace std;
 
@@ -80,7 +81,7 @@ namespace P{ // 输出区
 }
 
 namespace T{ // 测试区
-	int Dice=107086;
+	int Dice=-1;
 	void checker(){
 		int ans;
 		for(int i=0;i<100000;i++) ans+=F::c_67::ck(i);
@@ -110,11 +111,80 @@ void HideCursor(){
 
 vector<pair<ll,int>> numList;
 map<int,pair<ld,int>> rarityRankColor; // {Number, {Rank, ColorOfNumber}}
+map<int,string> accomName; // {ID, Destription} 
+vector<rval>searchContent[1005];
+int TYPES;
 
 string userName;
 vector<int> usedNumber;
 
 ifstream Config("config.txt");
+
+bool cmpAccom(rval x,rval y){
+	return x.r>y.r;
+}
+
+void workAccom(int accomID,string acName){
+	accomName[accomID]=acName;
+	global=-1;
+	make_check();
+	for(auto v:accom)
+		searchContent[accomID].push_back(v);
+	sort(searchContent[accomID].begin(),
+		 searchContent[accomID].end(),
+		 cmpAccom);
+	accom.clear();	
+}
+void initAccomSearch(){
+	flag_zero=1; workAccom(0,"0 相关成就"); 
+	flag_zero=0;
+	flag_include_number=1; workAccom(1,"含有各位数字");
+	flag_include_number=0; 
+    flag_special_two=1; workAccom(2,"含有两位数字");
+    flag_special_two=0;
+	flag_911=1; workAccom(3,"含有“911”");
+	flag_911=0;
+	flag_666=1; workAccom(4,"含有“666”");
+	flag_666=0;
+	flag_777=1; workAccom(5,"含有“777”");
+	flag_777=0;
+    flag_pi=1; workAccom(6,"含有 Pi 前缀子串");
+    flag_pi=0;
+	flag_e=1; workAccom(7,"含有 e 前缀子串");
+	flag_e=0;
+	flag_nailong=1; workAccom(8,"含有“233”大笑前缀子串");
+	flag_nailong=0;
+	flag_homo=1; workAccom(9,"含有恶臭数字前缀子串");
+	flag_homo=0;
+	flag_continues=1; workAccom(10,"特殊连续段");
+	flag_continues=0;
+	flag_same=1; workAccom(11,"连续相同数字");
+	flag_same=0;
+	flag_build=1; workAccom(12,"特殊构造");
+	flag_build=0;
+    flag_symmetry=1; workAccom(13,"回文 / Border");
+    flag_symmetry=0;
+	flag_slope=1; workAccom(14,"前后递增 / 减");
+	flag_slope=0;
+	flag_odd_even=1; workAccom(15,"奇偶性性质");
+	flag_odd_even=0;
+	flag_special_kind=1; workAccom(16,"特殊分类数字");
+	flag_special_kind=0;
+	flag_divisible_self=1; workAccom(17,"能被自己通过运算整除");
+	flag_divisible_self=0;
+    flag_multiple=1; workAccom(18,"一个数的倍数");
+    flag_multiple=0;
+	flag_power=1; workAccom(19,"高次方数");
+	flag_power=0;
+	flag_end_0=1; workAccom(20,"结尾为 0/00/...");
+	flag_end_0=0;
+	flag_end_5=1; workAccom(21,"结尾为 5/50/...");
+	flag_end_5=0;
+	flag_digit_size=1; workAccom(22,"数字长度相关");
+	flag_digit_size=0;
+	TYPES=23;
+	return;
+}
 int main(){
 	// ------------------- 初始化光标文字显示 -------------------
 	SetConsoleOutputCP(CP_UTF8);
@@ -124,6 +194,7 @@ int main(){
 	rander.seed(time(0)); 
 	fishRand(rander);
 	system("title FishRNG");
+	make_init();
 	// ------------------- 加载动画显示 -------------------
 	col(9); 
 	cout<<"FishRNG"; 
@@ -210,6 +281,10 @@ int main(){
 			global=nowNumber;
 			accom.clear();
 			make_check(); 
+//			if(accom.size()<5){
+//				cout<<nowNumber<<"\n";
+//				return 0;
+//			}
 			ll sumOfScore=0;
 			for(auto v:accom) 
 				sumOfScore+=(v.c==0?(ll)(1000/v.r):v.c);
@@ -290,6 +365,10 @@ int main(){
 		printC<<time(0)<<"\n";
 		for(int i=0;i<=999999;i++) printC<<rarityRankColor[i].fi<<" "<<rarityRankColor[i].se<<"\n";
 	}
+	// ------------------- 初始化成就分类系统 -------------------
+	#ifdef accomSearcher
+		initAccomSearch();
+	#endif
 	// ------------------- 程序主循环 -------------------
 	while(1){
 		intro:;
@@ -321,8 +400,8 @@ int main(){
 		}
 		cout<<"\n";
 		col(14); cout<<" - [ "; col(8);  cout<<"空格键 "; col(); cout<<"- 设置                         "; col(14); cout<<" ]"; col(); cout<<"\n";
-		col(14); cout<<" - [ "; col(3);  cout<<"A 键   "; col(); cout<<"- 从 account.txt 中导入账号信息"; col(14); cout<<" ]"; col(); cout<<"\n";
-		col(14); cout<<" - [ "; col(3);  cout<<"Q 键   "; col(); cout<<"- 导出用户信息至 account.txt   "; col(14); cout<<" ]"; col(); cout<<"\n";
+		col(14); cout<<" - [ "; col(3);  cout<<"A 键   "; col(); cout<<"- 打开账号相关信息             "; col(14); cout<<" ]"; col(); cout<<"\n";
+		col(14); cout<<" - [ "; col(12);  cout<<"E 键   "; col(); cout<<"- 打开成就相关信息             "; col(14); cout<<" ]"; col(); cout<<"\n";
 		col(14); cout<<" - [ "; col(11); cout<<"任意键 "; col(); cout<<"- 抽取数字                     "; col(14); cout<<" ]"; col(); cout<<"\n";
 		cout<<"\n";
 		// ------------------- 等待用户操作 -------------------
@@ -363,14 +442,14 @@ int main(){
 				goto setting;
 			}
 			goto intro;
-		}else if(keyboard==97){
+		}else if(keyboard==97){ // 账号界面（未完善）
 			// ------------------- 导入账号界面显示 -------------------
 			cls();
 			login:;
 			setPosition(0,0);
 			col(9); cout<<"FishRNG"; col(); cout<<"\n";
 			cout<<"\n";
-			col(8);	cout<<" # 导入账号界面"; col(); cout<<"\n";
+			col(8);	cout<<" # 账号界面"; col(); cout<<"\n";
  			cout<<"\n";
 			ifstream Account("account.txt");
 			string readName;
@@ -385,7 +464,6 @@ int main(){
 			// ------------------- 页面内等待操作 -------------------
 			int keyboardLogin=getch();
 			goto intro;
-		}else if(keyboard==113){
 			// ------------------- 导出账号界面显示 -------------------
 			cls();
 			logout:;
@@ -403,6 +481,125 @@ int main(){
 			col(11); cout<<" [ --- 按下任意键返回 --- ]"; col(); cout<<"\n";
 			// ------------------- 页面内等待操作 -------------------
 			int keyboardLogout=getch();
+			goto intro;
+		}else if(keyboard==101){
+			// ------------------- 显示全部类型的成就 -------------------
+			cls();
+			acc:;
+			setPosition(0,0);
+			col(9); cout<<"FishRNG"; col(); cout<<"\n";
+			cout<<"\n";
+			col(8);	cout<<" # 成就界面"; col(); cout<<"\n\n";
+			cout<<"\n";
+			int nowBegin=0, nowShowAccom=0;
+			int backPlace=0, frontPlace;
+			ReshowAccom:;
+			setPosition(4,0);
+			col(8); cout<<" - 左右滚动以切换你的显示页面 （"; col(10); cout<<nowShowAccom+1; col(8); cout<<"/"; col(10); cout<<TYPES; col(8); cout<<"）\n"; col();
+			setPosition(4,50);
+			col((nowShowAccom!=0)?10:8);
+			cout<<" [←]";
+			col((nowShowAccom!=TYPES-1)?10:8);
+			cout<<" [→]";
+			col();
+			backPlace=searchContent[nowShowAccom].size();
+			frontPlace=max(0,backPlace-5);
+			setPosition(6,0);
+			col(14);
+			cout<<nowShowAccom+1<<". "<<accomName[nowShowAccom]<<"                         \n";
+			for(int i=0;i<5;i++) 
+				setPosition(8+4*i,0),  cout<<"                                                               ",
+				setPosition(8+4*i+1,0),cout<<"                                                               ";
+			for(int i=backPlace-nowBegin-1;i;i=0){
+				int lastAccom=i, nowShow=0;
+				// ------------------- 重新渲染成就 -------------------
+				for(auto v:searchContent[nowShowAccom]){ 
+					if(nowShow>i-5){
+						bool firShow=(lastAccom==0);
+						int lineNumber=8+4*lastAccom;
+						setPosition(lineNumber,0); 
+						col(14);
+						cout<<"  -   ";
+						col(doubleToColorID(v.r));
+						cout<<"["; cout<<rarityColorIDChinese[doubleToColorID(v.r)]; cout<<"]";
+						col(14);
+						cout<<" [ ";
+						col(doubleToColorID(v.r));
+						cout<<v.d; 
+						col(14); 
+						cout<<" ]                                                     ";
+						cout<<"\n";
+						col(8);
+						cout<<"      ";
+						cout<<v.s<<"                                                                     ";
+						setPosition(lineNumber,50);
+						col(10);
+						cout<<" +"<<(v.c==0?(ll)(1000/v.r):v.c);
+						cout<<"\n";
+						col(2);
+						setPosition(lineNumber+1,50);
+						cout<<" "<<(showInt?((int)(v.r*100)):(v.r*100))<<"%                                                                     "; 
+						cout<<"\n";
+						col();
+						if(firShow){
+							setPosition(lineNumber-2,50);
+							col((nowBegin!=0)?10:8);
+							cout<<" [↑]";
+							col((nowBegin!=frontPlace)?10:8);
+							cout<<" [↓]";
+							col();
+						}
+					}
+					lastAccom--;
+					if(lastAccom<0) break;
+					nowShow++;
+				}
+			}		
+			setPosition(28,0);	
+			col(11); cout<<" [ --- 按下任意键返回 --- ]"; col(); cout<<"\n";
+			int keyboardSet=getch();
+			if(keyboardSet==224){
+				keyboardSet=getch(); // 注意上下左右有两次操作
+				if(keyboardSet==72){
+					nowBegin--;
+					nowBegin=max(nowBegin,0);
+					goto ReshowAccom;
+				}else if(keyboardSet==80){
+					nowBegin++;
+					nowBegin=min(nowBegin,frontPlace);
+					goto ReshowAccom;
+				}else if(keyboardSet==75){
+					nowShowAccom--;
+					nowBegin=0;
+					nowShowAccom=max(nowShowAccom,0);
+					goto ReshowAccom;
+				}else if(keyboardSet==77){
+					nowShowAccom++;
+					nowBegin=0;
+					nowShowAccom=min(nowShowAccom,TYPES-1);
+					goto ReshowAccom;
+				}
+			}else if(keyboardSet==119){
+				nowBegin--;
+				nowBegin=max(nowBegin,0);
+				goto ReshowAccom;				
+			}else if(keyboardSet==115){
+				nowBegin++;
+				nowBegin=min(nowBegin,frontPlace);
+				goto ReshowAccom;				
+			}else if(keyboardSet==97){
+				nowShowAccom--;
+				nowBegin=0;
+				nowShowAccom=max(nowShowAccom,0);
+				goto ReshowAccom;
+			}else if(keyboardSet==100){
+				nowShowAccom++;
+				nowBegin=0;
+				nowShowAccom=min(nowShowAccom,TYPES-1);
+				goto ReshowAccom;
+			}
+			// ------------------- 页面内等待操作 -------------------
+			getch();
 			goto intro;
 		}else{
 			// ------------------- 用户进行抽取数字 -------------------
@@ -534,7 +731,7 @@ int main(){
 			col(resultLvl); cout<<(showInt?((int)rarityRankColor[result].fi):(rarityRankColor[result].fi))<<"%";
 			col(); cout<<"（并列）"; 
 			cout<<"                                          \n";
-			int backPlace=accom.size();
+			int backPlace=accom.size(), frontPlace=max(backPlace-5,0);
 			setPosition(8+4*min(5,backPlace),0);
 			col(11); cout<<" [ --- 按下任意键返回 --- ]"; col(); cout<<"\n";
 			setPosition(6,0);
@@ -577,7 +774,7 @@ int main(){
 							setPosition(lineNumber-2,50);
 							col((nowBegin!=0)?10:8);
 							cout<<" [↑]";
-							col((nowBegin!=backPlace-5)?10:8);
+							col((nowBegin!=frontPlace)?10:8);
 							cout<<" [↓]";
 							col();
 						}
@@ -596,7 +793,7 @@ int main(){
 					goto Reshow;
 				}else if(keyboardSet==80){
 					nowBegin++;
-					nowBegin=min(nowBegin,backPlace-5);
+					nowBegin=min(nowBegin,frontPlace);
 					goto Reshow;
 				}
 			}else if(keyboardSet==119){
@@ -605,7 +802,7 @@ int main(){
 				goto Reshow;				
 			}else if(keyboardSet==115){
 				nowBegin++;
-				nowBegin=min(nowBegin,backPlace-5);
+				nowBegin=min(nowBegin,frontPlace);
 				goto Reshow;				
 			}
 		}
