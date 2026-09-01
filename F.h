@@ -1262,7 +1262,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_add{
         const ld rarity_d=0.095428;
-        string description="";
+        string description="位数加和整除谁，今日方知我是我";
         const string success="是自己各位数之和的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1285,7 +1285,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_mul{
         const ld rarity_d=0.000477;
-        string description="";
+        string description="位数乘积整除谁，今日方知我是我";
         const string success="是自己各位数之积的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1308,7 +1308,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_xor{
         const ld rarity_d=0.213513;
-        string description="";
+        string description="位数异或整除谁，今日方知我是我";
         const string success="是自己各位数xor的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1331,7 +1331,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_or{
         const ld rarity_d=0.087334;
-        string description="";
+        string description="位数或和整除谁，今日方知我是我";
         const string success="是自己各位数or的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1354,7 +1354,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_and{
         const ld rarity_d=0.023433;
-        string description="";
+        string description="位数与和整除谁，今日方知我是我";
         const string success="是自己各位数and的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1989,10 +1989,14 @@ namespace F{ // 成就计算区
 		if(flag_include_number||c_9::ck(global))
 			accom.push_back(c_9::suc());
         
-		if(flag_special_two||c_67::ck(global))
-			accom.push_back(c_67::suc());
 		if(flag_special_two||c_91::ck(global))
 			accom.push_back(c_91::suc());
+		if(flag_special_two||c_78::ck(global))
+			accom.push_back(c_78::suc());
+		if(flag_special_two||c_13::ck(global))
+			accom.push_back(c_13::suc());
+		if(flag_special_two||c_67::ck(global))
+			accom.push_back(c_67::suc());
 		if(flag_special_two||c_58::ck(global))
 			accom.push_back(c_58::suc());	
 
