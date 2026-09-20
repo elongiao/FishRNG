@@ -111,80 +111,12 @@ void HideCursor(){
 
 vector<pair<ll,int>> numList;
 map<int,pair<ld,int>> rarityRankColor; // {Number, {Rank, ColorOfNumber}}
-map<int,string> accomName; // {ID, Destription} 
-vector<rval>searchContent[1005];
-int TYPES;
 
 string userName;
 vector<int> usedNumber;
 
 ifstream Config("config.txt");
 
-bool cmpAccom(rval x,rval y){
-	return x.r>y.r;
-}
-
-void workAccom(int accomID,string acName){
-	accom.clear();	
-	accomName[accomID]=acName;
-	global=-1;
-	make_check();
-	for(auto v:accom)
-		searchContent[accomID].push_back(v);
-	sort(searchContent[accomID].begin(),
-		 searchContent[accomID].end(),
-		 cmpAccom);
-}
-void initAccomSearch(){
-	flag_zero=1; workAccom(0,"0 相关成就"); 
-	flag_zero=0;
-	flag_include_number=1; workAccom(1,"含有各位数字");
-	flag_include_number=0; 
-    flag_special_two=1; workAccom(2,"含有两位数字");
-    flag_special_two=0;
-	flag_911=1; workAccom(3,"含有“911”");
-	flag_911=0;
-	flag_666=1; workAccom(4,"含有“666”");
-	flag_666=0;
-	flag_777=1; workAccom(5,"含有“777”");
-	flag_777=0;
-    flag_pi=1; workAccom(6,"含有 Pi 前缀子串");
-    flag_pi=0;
-	flag_e=1; workAccom(7,"含有 e 前缀子串");
-	flag_e=0;
-	flag_nailong=1; workAccom(8,"含有“233”大笑前缀子串");
-	flag_nailong=0;
-	flag_homo=1; workAccom(9,"含有恶臭数字前缀子串");
-	flag_homo=0;
-	flag_continues=1; workAccom(10,"特殊连续段");
-	flag_continues=0;
-	flag_same=1; workAccom(11,"连续相同数字");
-	flag_same=0;
-	flag_build=1; workAccom(12,"特殊构造");
-	flag_build=0;
-    flag_symmetry=1; workAccom(13,"回文 / Border");
-    flag_symmetry=0;
-	flag_slope=1; workAccom(14,"前后递增 / 减");
-	flag_slope=0;
-	flag_odd_even=1; workAccom(15,"奇偶性性质");
-	flag_odd_even=0;
-	flag_special_kind=1; workAccom(16,"特殊分类数字");
-	flag_special_kind=0;
-	flag_divisible_self=1; workAccom(17,"能被自己通过运算整除");
-	flag_divisible_self=0;
-    flag_multiple=1; workAccom(18,"一个数的倍数");
-    flag_multiple=0;
-	flag_power=1; workAccom(19,"高次方数");
-	flag_power=0;
-	flag_end_0=1; workAccom(20,"结尾为 0/00/...");
-	flag_end_0=0;
-	flag_end_5=1; workAccom(21,"结尾为 5/50/...");
-	flag_end_5=0;
-	flag_digit_size=1; workAccom(22,"数字长度相关");
-	flag_digit_size=0;
-	TYPES=23;
-	return;
-}
 int main(){
 	// ------------------- 初始化光标文字显示 -------------------
 	SetConsoleOutputCP(CP_UTF8);
