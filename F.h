@@ -959,7 +959,7 @@ namespace F{ // 成就计算区
     namespace c_dense_5{
         const ld rarity_d=0.192480;
         string description="一块很结实的数？（5）";
-        const string success="极差小于等于5";
+        const string success="极差小于等于 5";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -972,7 +972,7 @@ namespace F{ // 成就计算区
     namespace c_dense_4{
         const ld rarity_d=0.085975;
         string description="一块很结实的数？（4）";
-        const string success="极差小于等于4";
+        const string success="极差小于等于 4";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -985,7 +985,7 @@ namespace F{ // 成就计算区
     namespace c_dense_3{
         const ld rarity_d=0.030304;
         string description="一块很结实的数？（3）";
-        const string success="极差小于等于3";
+        const string success="极差小于等于 3";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -998,7 +998,7 @@ namespace F{ // 成就计算区
     namespace c_dense_2{
         const ld rarity_d=0.007491;
         string description="一块很结实的数？（2）";
-        const string success="极差小于等于2";
+        const string success="极差小于等于 2";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -1193,12 +1193,84 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
-    namespace c_palindrome_1{
-        const ld rarity_d=0.100009;
-        string description="回文（1）";
+    namespace c_palindrome_3{
+        const ld rarity_d=0.335700;
+        string description="回文（3）";
+        const string success="存在长度为3的回文子串";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const string s=to_string(x);
+            int sz=s.size();
+            for(int i = 0;i+2<sz;++i){
+                bool fl=1;
+                for(int j = 0;j<1;++j)
+                    fl&=(s[i+j]==s[i+2-j]);
+                if(fl) return 1;
+            }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_palindrome_4{
+        const ld rarity_d=0.028620;
+        string description="回文（4）";
+        const string success="存在长度为 4 的回文子串";
+        bool ck(int x){
+            if(!~x||x<1000) return false;
+            const string s=to_string(x);
+            int sz=s.size();
+            for(int i = 0;i+3<sz;++i){
+                bool fl=1;
+                for(int j = 0;j<2;++j)
+                    fl&=(s[i+j]==s[i+3-j]);
+                if(fl) return 1;
+            }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_palindrome_5{
+        const ld rarity_d=0.018810;
+        string description="回文（5）";
+        const string success="存在长度为 3 的回文子串";
+        bool ck(int x){
+            if(!~x||x<10000) return false;
+            const string s=to_string(x);
+            int sz=s.size();
+            for(int i = 0;i+4<sz;++i){
+                bool fl=1;
+                for(int j = 0;j<2;++j)
+                    fl&=(s[i+j]==s[i+4-j]);
+                if(fl) return 1;
+            }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_palindrome_6{
+        const ld rarity_d=0.000900;
+        string description="回文（6）";
+        const string success="原串与反转串有长度为 6 的公共前缀";
+        bool ck(int x){
+            if(!~x||x<10000) return false;
+            const string s=to_string(x);
+            int sz=s.size();
+            for(int i = 0;i+5<sz;++i){
+                bool fl=1;
+                for(int j = 0;j<4;++j)
+                    fl&=(s[i+j]==s[i+5-j]);
+                if(fl) return 1;
+            }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_pre_same_bck_1{
+        const ld rarity_d=0.099999;
+        string description="前赴后继（1）";
         const string success="原串与反转串有长度为 1 的公共前缀";
         bool ck(int x){
-            if(!~x) return false;
+            if(!~x||x<10) return false;
             const string s=to_string(x);int sz=s.size();
             if(sz<1) return 0;
             for(int i = 0,j=sz-1;i<1;++i,--j)
@@ -1207,12 +1279,12 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
-    namespace c_palindrome_2{
-        const ld rarity_d=0.010089;
-        string description="回文（2）";
+    namespace c_pre_same_bck_2{
+        const ld rarity_d=0.009990;
+        string description="前赴后继（2）";
         const string success="原串与反转串有长度为 2 的公共前缀";
         bool ck(int x){
-            if(!~x) return false;
+            if(!~x||x<1000) return false;
             const string s=to_string(x);int sz=s.size();
             if(sz<2) return 0;
             for(int i = 0,j=sz-1;i<2;++i,--j)
@@ -1221,12 +1293,12 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
-    namespace c_palindrome_3{
-        const ld rarity_d=0.001980;
-        string description="回文（3）";
+    namespace c_pre_same_bck_3{
+        const ld rarity_d=0.000900;
+        string description="前赴后继（3）";
         const string success="原串与反转串有长度为 3 的公共前缀";
         bool ck(int x){
-            if(!~x) return false;
+            if(!~x||x<100000) return false;
             const string s=to_string(x);int sz=s.size();
             if(sz<3) return 0;
             for(int i = 0,j=sz-1;i<3;++i,--j)
@@ -2216,12 +2288,20 @@ namespace F{ // 成就计算区
 			accom.push_back(c_border_3::suc());	
 		if(flag_symmetry||c_border_4::ck(global))
 			accom.push_back(c_border_4::suc());	
-		if(flag_symmetry||c_palindrome_1::ck(global))
-			accom.push_back(c_palindrome_1::suc());	
-		if(flag_symmetry||c_palindrome_2::ck(global))
-			accom.push_back(c_palindrome_2::suc());	
+		if(flag_symmetry||c_pre_same_bck_1::ck(global))
+			accom.push_back(c_pre_same_bck_1::suc());	
+		if(flag_symmetry||c_pre_same_bck_2::ck(global))
+			accom.push_back(c_pre_same_bck_2::suc());	
+		if(flag_symmetry||c_pre_same_bck_3::ck(global))
+			accom.push_back(c_pre_same_bck_3::suc());		
 		if(flag_symmetry||c_palindrome_3::ck(global))
-			accom.push_back(c_palindrome_3::suc());	
+			accom.push_back(c_palindrome_3::suc());		
+		if(flag_symmetry||c_palindrome_4::ck(global))
+			accom.push_back(c_palindrome_4::suc());		
+		if(flag_symmetry||c_palindrome_5::ck(global))
+			accom.push_back(c_palindrome_5::suc());	
+		if(flag_symmetry||c_palindrome_6::ck(global))
+			accom.push_back(c_palindrome_6::suc());	
         
         if(flag_slope||c_Continuous_sequence_d2::ck(global))
             accom.push_back(c_Continuous_sequence_d2::suc());
@@ -2396,7 +2476,7 @@ namespace F{ // 成就计算区
         flag_same=0;
         flag_build=1; workAccom(10,"特殊构造");
         flag_build=0;
-        flag_symmetry=1; workAccom(11,"回文 / Border");
+        flag_symmetry=1; workAccom(11,"前赴后继 / Border");
         flag_symmetry=0;
         flag_slope=1; workAccom(12,"前后递增 / 减");
         flag_slope=0;
