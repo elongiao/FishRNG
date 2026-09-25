@@ -12,15 +12,13 @@ using namespace std;
 
 namespace F{ // 成就计算区
 	struct rval{ ld r; string d,s; ll c; };
-    const int TYPES=21;
-    bool flag_zero=0,flag_include_number=0,
-    flag_spoof=0,flag_xxx=0,flag_pi=0,flag_e=0,
-    flag_nailong=0,flag_homo=0,flag_important_days=0;
-    bool flag_continues=0,flag_same=0,flag_build=0,
-    flag_symmetry=0,flag_slope=0,flag_odd_even=0;
-    bool flag_special_kind=0,flag_divisible_self=0,
-    flag_multiple=0,flag_power=0;
-    bool flag_end_0=0,flag_end_5=0,flag_digit_size=0;
+    const int TYPES=23;
+    bool flag_zero=0,flag_include_number=0,flag_spoof=0,flag_xxx=0,
+    flag_pi=0,flag_e=0,flag_nailong=0,flag_homo=0,flag_important_days=0,
+    flag_continues=0,flag_same=0,flag_build=0,flag_symmetry=0,flag_slope=0,
+    flag_odd_even=0,flag_special_kind=0,flag_digit_properties=0,flag_multiple=0,
+    flag_power=0,flag_end_0=0,flag_end_5=0,flag_digit_size=0,flag_equation=0,
+    flag_brother=0;
     //包含特殊数字
     namespace c_0{
 		const ld rarity_d=0.468559;
@@ -104,7 +102,7 @@ namespace F{ // 成就计算区
             const string s=to_string(x);
             int sz=s.size(),cnt=0;
             for(int i = 0;i<sz;++i) cnt+=(s[i]=='0');
-            return 0;
+            if(cnt^2) return 0;
             for(int i = 0;i+3<sz;++i)
                 if(s[i]=='0'&&s[i+3]=='0') return 1;
             return 0;
@@ -225,7 +223,7 @@ namespace F{ // 成就计算区
     }
     namespace c_9{
 		const ld rarity_d=0.468559;
-		string description="轮回终结之数";
+		string description="轮回之数";
 		const string success="包含一个“9”";
 		bool ck(int x){
             if(!~x) return false;
@@ -239,7 +237,7 @@ namespace F{ // 成就计算区
     }
 	namespace c_67{
 		const ld rarity_d=0.039700;
-		string description="676767676767676767676767676767676767";
+		string description="676767676767676767";
 		const string success="包含一个“67”";
 		bool ck(int x){
             if(!~x) return false;
@@ -252,7 +250,7 @@ namespace F{ // 成就计算区
 	}
     namespace c_91{
         const ld rarity_d=0.039700;
-        string description="91其实是互联网表层";
+        string description="互联网表层";
         const string success="包含一个“91”";
         bool ck(int x){
             if(!~x) return false;
@@ -335,6 +333,32 @@ namespace F{ // 成就计算区
         bool ck(int x){
             if(!~x) return false;
             return (x==911911);
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_42{
+        const ld rarity_d=0.039700;
+        string description="所有问题的终极答案";
+        const string success="包含一个“42”";
+        bool ck(int x){
+            if(!~x) return false;
+            const string s=to_string(x);
+            for(int i=1;i<(int)s.size();i++)
+                if(s[i-1]=='4'&&s[i]=='2') return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_420{
+        const ld rarity_d=0.003700;
+        string description="所有问题的终极答案";
+        const string success="包含一个“420”";
+        bool ck(int x){
+            if(!~x) return false;
+            const string s=to_string(x);
+            for(int i=2;i<(int)s.size();i++)
+                if(s[i-2]=='4'&&s[i-1]=='2'&&s[i]=='0') return 1;
+            return 0;
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
@@ -1375,37 +1399,6 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
-    namespace c_pair2{
-        const ld rarity_d=0.086139;
-        string description="一对两位数";
-        const string success="可以找出起点不同数一样的个位数";
-        const int pw[6]={1,10,100,1000,10000,100000};
-        bool ck(int x){
-            if(!~x) return false;
-            int sz=log10(x);
-            for(int i = 0;i<sz;++i)
-                for(int j = i+1;j<sz;++j)
-                    if(x/pw[i]%100==x/pw[j]%100) return 1;
-            return 0;
-        }
-        rval suc(){ return {rarity_d,description,success}; }
-    }
-    namespace c_pair3{
-        const ld rarity_d=0.005212;
-        string description="一对三位数位数";
-        const string success="可以分割出两个一样的两位数";
-        const int pw[6]={1,10,100,1000,10000,100000};
-        bool ck(int x){
-            if(!~x) return false;
-            int sz=log10(x);
-            for(int i = 0;i<sz-1;++i)
-                for(int j = i+1;j<sz-1;++j)
-                    if(x/pw[i]%1000==x/pw[j]%1000) return 1;
-            return 0;
-        }
-        rval suc(){ return {rarity_d,description,success}; }
-    }
-    //数学
     bitset<1000005> is_prime;
     namespace c_prime{
         const ld rarity_d=0.078498;
@@ -1429,7 +1422,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_add{
         const ld rarity_d=0.095428;
-        string description="位数加和整除谁，今日方知我是我";
+        string description="整除位之和，方知我是我";
         const string success="是自己各位数之和的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1452,7 +1445,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_mul{
         const ld rarity_d=0.000477;
-        string description="位数乘积整除谁，今日方知我是我";
+        string description="整除位乘积，ZPBMG";
         const string success="是自己各位数之积的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1475,7 +1468,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_xor{
         const ld rarity_d=0.213513;
-        string description="位数异或整除谁，今日方知我是我";
+        string description="整除位异或，方知我是我";
         const string success="是自己各位数xor的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1498,7 +1491,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_or{
         const ld rarity_d=0.087334;
-        string description="位数或和整除谁，今日方知我是我";
+        string description="整除位数或，方知我是我";
         const string success="是自己各位数or的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1521,7 +1514,7 @@ namespace F{ // 成就计算区
     }
     namespace c_return_number_and{
         const ld rarity_d=0.023433;
-        string description="位数与和整除谁，今日方知我是我";
+        string description="整除位与和，方知我是我";
         const string success="是自己各位数and的倍数";
         bool ck(int x){
             if(!~x) return false;
@@ -1539,6 +1532,34 @@ namespace F{ // 成就计算区
                 return 1;
             }
             return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_number_div3{
+        const ld rarity_d=0.004096;
+        string description="寰宇虚数，三生万物";
+        const string success="每一位数都是三的倍数";
+        bool ck(int x){
+            if(!~x) return false;
+            while(x){
+                if(x%10%3) return 0;
+                x/=10;
+            }
+            return 1;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_number_div4{
+        const ld rarity_d=0.000729;
+        string description="东南西北，威震八荒";
+        const string success="每一位数都是四的倍数";
+        bool ck(int x){
+            if(!~x) return false;
+            while(x){
+                if(x%10%4) return 0;
+                x/=10;
+            }
+            return 1;
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
@@ -2114,6 +2135,303 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
+    namespace c_equation_add{
+        const ld rarity_d=0.008550;
+        string description="a+b=c";
+        const string success="可以分成非空的 abc，使得 a+b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if(x/pw[i]+x%pw[i]/pw[j]==x%pw[j]){
+                        description=to_string(x/pw[i])+"+";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_sub{
+        const ld rarity_d=0.008910;
+        string description="a-b=c";
+        const string success="可以分成非空的 abc，使得 a-b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if(x/pw[i]-x%pw[i]/pw[j]==x%pw[j]){
+                        description=to_string(x/pw[i])+"-";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_mul{
+        const ld rarity_d=0.012916;
+        string description="a*b=c";
+        const string success="可以分成非空的 abc，使得 a*b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if((x/pw[i])*(x%pw[i]/pw[j])==x%pw[j]){
+                        description=to_string(x/pw[i])+"*";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_div{
+        const ld rarity_d=0.002837;
+        string description="a/b=c";
+        const string success="可以分成非空的 abc，使得 a/b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if(x%pw[i]/pw[j]&&1.0*(x/pw[i])/(x%pw[i]/pw[j])==x%pw[j]){
+                        description=to_string(x/pw[i])+"/";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_and{
+        const ld rarity_d=0.232460;
+        string description="a&b=c";
+        const string success="可以分成非空的 abc，使得 a&b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if((x/pw[i]&x%pw[i]/pw[j])==x%pw[j]){
+                        description=to_string(x/pw[i])+"&";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_or{
+        const ld rarity_d=0.010900;
+        string description="a|b=c";
+        const string success="可以分成非空的 abc，使得 a|b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if((x/pw[i]|x%pw[i]/pw[j])==x%pw[j]){
+                        description=to_string(x/pw[i])+"|";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_xor{
+        const ld rarity_d=0.013488;
+        string description="a^b=c";
+        const string success="可以分成非空的 abc，使得 a^b=c";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i)
+                for(int j = i-1;j;--j)
+                    if((x/pw[i]^x%pw[i]/pw[j])==x%pw[j]){
+                        description=to_string(x/pw[i])+"^";
+                        description+=to_string(x%pw[i]/pw[j])+"=";
+                        description+=to_string(x%pw[j]);
+                        return 1;
+                    }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_equation_rev{
+        const ld rarity_d=0.001834;
+        string description="~a=b";
+        const string success="可以分成非空的 ab，使得 ~a=b";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int y=log10(x);
+            for(int i = y;i>1;--i){
+                int a=x/pw[i],t=0,b=x%pw[i];
+                for(int j = 1;j<=a;j<<=1) if(!(a&j)) t+=j;
+                if(t==b){
+                    description="~"+to_string(a);
+                    description+="="+to_string(b);
+                    return 1;
+                }
+            }
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_brother_aabb{
+        const ld rarity_d=0.027810;
+        string description="/aabb\\";
+        const string success="存在一段形如 aabb 的子串";
+        bool ck(int x){
+            if(!~x||x<1000) return false;
+            const string s=to_string(x);
+            for(int i = 0;i<s.size()-3;++i)
+                if(s[i]==s[i+1]&&s[i+2]==s[i+3]) return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_brother_xaabbx{
+        const ld rarity_d=0.009090;
+        string description="/aabb\\";
+        const string success="正中间形如 aabb";
+        bool ck(int x){
+            if(!~x) return false;
+            const string s=to_string(x);
+            int sz=s.size();
+            if(sz==4) return (s[0]==s[1]&&s[2]==s[3]);
+            else if(sz==6) return (s[1]==s[2]&&s[3]==s[4]);
+            else return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_brother_abab{
+        const ld rarity_d=0.027000;
+        string description="/abab\\";
+        const string success="存在一段形如 abab 的子串";
+        bool ck(int x){
+            if(!~x||x<1000) return false;
+            const string s=to_string(x);
+            for(int i = 0;i<s.size()-3;++i)
+                if(s[i]==s[i+2]&&s[i+1]==s[i+3]) return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_brother_xababx{
+        const ld rarity_d=0.009090;
+        string description="/abab\\";
+        const string success="正中间形如 abab";
+        bool ck(int x){
+            if(!~x) return false;
+            const string s=to_string(x);
+            int sz=s.size();
+            if(sz==4) return (s[0]==s[2]&&s[1]==s[3]);
+            else if(sz==6) return (s[1]==s[3]&&s[2]==s[4]);
+            else return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_brother_aabbcc{
+        const ld rarity_d=0.000900;
+        string description="/aabbcc\\";
+        const string success="整体形如 aabbcc";
+        bool ck(int x){
+            if(!~x||x<100000) return false;
+            const string s=to_string(x);
+            return (s[0]==s[1]&&s[2]==s[3]&&s[4]==s[5]);
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_brother_ababab{
+        const ld rarity_d=0.000090;
+        string description="/ababab\\";
+        const string success="整体形如 ababab";
+        bool ck(int x){
+            if(!~x||x<100000) return false;
+            const string s=to_string(x);
+            return (s[0]==s[2]&&s[2]==s[4]&&s[1]==s[3]&&s[3]==s[5]);
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_pair2{
+        const ld rarity_d=0.086139;
+        string description="一对双胞胎";
+        const string success="存在起点不同但一样的两位数";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int sz=log10(x);
+            for(int i = 0;i<sz-1;++i)
+                for(int j = i+1;j<sz-1;++j)
+                    if(x/pw[i]%100==x/pw[j]%100) return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_pair3{
+        const ld rarity_d=0.005211;
+        string description="一大对双胞胎";
+        const string success="存在起点不同但一样的三位数";
+        bool ck(int x){
+            if(!~x||x<1000) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int sz=log10(x);
+            for(int i = 0;i<sz-1;++i)
+                for(int j = i+1;j<sz-1;++j)
+                    if(x/pw[i]%1000==x/pw[j]%1000) return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_pair2_1{
+        const ld rarity_d=0.174395;
+        string description="一对异卵双胞胎";
+        const string success="存在起点不同但相差 1 的两位数";
+        bool ck(int x){
+            if(!~x||x<100) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int sz=log10(x);
+            for(int i = 0;i<sz;++i)
+                for(int j = i+1;j<sz;++j)
+                    if(abs(x/pw[i]%100-x/pw[j]%100)==1) return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_pair3_1{
+        const ld rarity_d=0.011055;
+        string description="一大对异卵双胞胎";
+        const string success="存在起点不同但相差 1 的三位数";
+        bool ck(int x){
+            if(!~x||x<1000) return false;
+            const int pw[6]={1,10,100,1000,10000,100000};
+            int sz=log10(x);
+            for(int i = 0;i<sz-1;++i)
+                for(int j = i+1;j<sz-1;++j)
+                    if(abs(x/pw[i]%1000-x/pw[j]%1000)==1) return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
 	int global; // 全局的数值量
 	vector<rval> accom;
     void make_init(){
@@ -2174,6 +2492,10 @@ namespace F{ // 成就计算区
 			accom.push_back(c_911::suc());		
 		if(flag_spoof||c_911911::ck(global))
 			accom.push_back(c_911911::suc());	
+		if(flag_spoof||c_42::ck(global))
+			accom.push_back(c_42::suc());
+		if(flag_spoof||c_420::ck(global))
+			accom.push_back(c_420::suc());
         
 		if(flag_xxx||c_666::ck(global))
 			accom.push_back(c_666::suc());	
@@ -2234,7 +2556,7 @@ namespace F{ // 成就计算区
             accom.push_back(c_1945::suc());
         if(flag_important_days||c_194593::ck(global))
             accom.push_back(c_194593::suc());
-        //-------------------------------------------------------------------
+        
 		if(flag_continues||c_Arithmetic_progressiont::ck(global))
 			accom.push_back(c_Arithmetic_progressiont::suc());	
         if(flag_continues||c_Arithmetic_progressiont_l::ck(global))
@@ -2333,22 +2655,26 @@ namespace F{ // 成就计算区
             accom.push_back(c_odd_even::suc());
         if(flag_odd_even||c_half_odd_even::ck(global))
             accom.push_back(c_half_odd_even::suc());
-        //-------------------------------------------------------------------
+        
         if(flag_special_kind||c_perfect_number::ck(global))
             accom.push_back(c_perfect_number::suc());
 		if(flag_special_kind||c_prime::ck(global))
 			accom.push_back(c_prime::suc());	
 
-        if(flag_divisible_self||c_return_number_add::ck(global))
+        if(flag_digit_properties||c_return_number_add::ck(global))
             accom.push_back(c_return_number_add::suc());
-        if(flag_divisible_self||c_return_number_mul::ck(global))
+        if(flag_digit_properties||c_return_number_mul::ck(global))
             accom.push_back(c_return_number_mul::suc());
-        if(flag_divisible_self||c_return_number_xor::ck(global))
+        if(flag_digit_properties||c_return_number_xor::ck(global))
             accom.push_back(c_return_number_xor::suc());
-        if(flag_divisible_self||c_return_number_or::ck(global))
+        if(flag_digit_properties||c_return_number_or::ck(global))
             accom.push_back(c_return_number_or::suc());
-        if(flag_divisible_self||c_return_number_and::ck(global))
+        if(flag_digit_properties||c_return_number_and::ck(global))
             accom.push_back(c_return_number_and::suc());
+        if(flag_digit_properties||c_number_div3::ck(global))
+            accom.push_back(c_number_div3::suc());
+        if(flag_digit_properties||c_number_div4::ck(global))
+            accom.push_back(c_number_div4::suc());
 
         if(flag_multiple||c_Multiple_2::ck(global))
             accom.push_back(c_Multiple_2::suc());
@@ -2399,7 +2725,7 @@ namespace F{ // 成就计算区
             accom.push_back(c_17_power::suc());
         if(flag_power||c_19_power::ck(global))
             accom.push_back(c_19_power::suc());
-        //-------------------------------------------------------------------
+        
 		if(flag_end_0||c_end_0::ck(global))
 			accom.push_back(c_end_0::suc());
 		if(flag_end_0||c_end_00::ck(global))
@@ -2423,7 +2749,7 @@ namespace F{ // 成就计算区
 			accom.push_back(c_end_50000::suc());
 		if(flag_end_5||c_end_500000::ck(global))
 			accom.push_back(c_end_500000::suc());
-        //-------------------------------------------------------------------
+
 		if(flag_digit_size||c_six_digit::ck(global))
 			accom.push_back(c_six_digit::suc());
 		if(flag_digit_size||c_five_digit::ck(global))
@@ -2436,6 +2762,44 @@ namespace F{ // 成就计算区
 			accom.push_back(c_two_digit::suc());
 		if(flag_digit_size||c_one_digit::ck(global))
 			accom.push_back(c_one_digit::suc());
+        
+		if(flag_equation||c_equation_add::ck(global))
+			accom.push_back(c_equation_add::suc());
+		if(flag_equation||c_equation_sub::ck(global))
+			accom.push_back(c_equation_sub::suc());
+		if(flag_equation||c_equation_mul::ck(global))
+			accom.push_back(c_equation_mul::suc());
+		if(flag_equation||c_equation_div::ck(global))
+			accom.push_back(c_equation_div::suc());
+		if(flag_equation||c_equation_and::ck(global))
+			accom.push_back(c_equation_and::suc());
+		if(flag_equation||c_equation_or::ck(global))
+			accom.push_back(c_equation_or::suc());
+		if(flag_equation||c_equation_xor::ck(global))
+			accom.push_back(c_equation_xor::suc());
+		if(flag_equation||c_equation_rev::ck(global))
+			accom.push_back(c_equation_rev::suc());
+            
+		if(flag_brother||c_brother_aabb::ck(global))
+			accom.push_back(c_brother_xaabbx::suc());
+		if(flag_brother||c_brother_xaabbx::ck(global))
+			accom.push_back(c_brother_xaabbx::suc());
+		if(flag_brother||c_brother_abab::ck(global))
+			accom.push_back(c_brother_abab::suc());
+		if(flag_brother||c_brother_xababx::ck(global))
+			accom.push_back(c_brother_xababx::suc());
+		if(flag_brother||c_brother_aabbcc::ck(global))
+			accom.push_back(c_brother_aabbcc::suc());
+		if(flag_brother||c_brother_ababab::ck(global))
+			accom.push_back(c_brother_ababab::suc());
+		if(flag_brother||c_pair2::ck(global))
+			accom.push_back(c_pair2::suc());
+		if(flag_brother||c_pair3::ck(global))
+			accom.push_back(c_pair3::suc());
+		if(flag_brother||c_pair2_1::ck(global))
+			accom.push_back(c_pair2_1::suc());
+		if(flag_brother||c_pair3_1::ck(global))
+			accom.push_back(c_pair3_1::suc());
 		return;
 	}
     map<int,string> accomName; // {ID, Destription} 
@@ -2458,9 +2822,9 @@ namespace F{ // 成就计算区
         flag_zero=0;
         flag_include_number=1; workAccom(1,"含有各位数字");
         flag_include_number=0; 
-        flag_spoof=1; workAccom(2,"含有恶搞元素");
+        flag_spoof=1; workAccom(2,"彩蛋数字");
         flag_spoof=0;
-        flag_xxx=1; workAccom(3,"含有神秘三位数");
+        flag_xxx=1; workAccom(3,"含有神秘的三连击");
         flag_xxx=0;
         flag_pi=1; workAccom(4,"含有 Pi 前缀子串");
         flag_pi=0;
@@ -2484,8 +2848,8 @@ namespace F{ // 成就计算区
         flag_odd_even=0;
         flag_special_kind=1; workAccom(14,"特殊分类数字");
         flag_special_kind=0;
-        flag_divisible_self=1; workAccom(15,"能被自己通过运算整除");
-        flag_divisible_self=0;
+        flag_digit_properties=1; workAccom(15,"每位数的性质");
+        flag_digit_properties=0;
         flag_multiple=1; workAccom(16,"一个数的倍数");
         flag_multiple=0;
         flag_power=1; workAccom(17,"高次方数");
@@ -2496,6 +2860,10 @@ namespace F{ // 成就计算区
         flag_end_5=0;
         flag_digit_size=1; workAccom(20,"数字长度相关");
         flag_digit_size=0;
+        flag_equation=1; workAccom(21,"构成等式的");
+        flag_equation=0;
+        flag_brother=1; workAccom(22,"多组相同的的");
+        flag_brother=0;
         return;
     }
 }
