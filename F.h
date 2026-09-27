@@ -12,7 +12,7 @@ using namespace std;
 
 namespace F{ // 成就计算区
 	struct rval{ ld r; string d,s; ll c; };
-    const int TYPES=23;
+    const int TYPES=24;
     bool flag_zero=0,flag_include_number=0,flag_spoof=0,flag_xxx=0,
     flag_pi=0,flag_e=0,flag_nailong=0,flag_homo=0,flag_important_days=0,
     flag_continues=0,flag_same=0,flag_build=0,flag_symmetry=0,flag_slope=0,
@@ -237,7 +237,7 @@ namespace F{ // 成就计算区
     }
 	namespace c_67{
 		const ld rarity_d=0.039700;
-		string description="676767676767676767";
+		string description="676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767";
 		const string success="包含一个“67”";
 		bool ck(int x){
             if(!~x) return false;
@@ -608,7 +608,7 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
-    namespace c_2024{
+    namespace c_2048{
         const ld rarity_d=0.000300;
         string description="窝通关了2048！";
         const string success="包含一个“2048”";
@@ -1381,21 +1381,6 @@ namespace F{ // 成就计算区
             const string s=to_string(x);
             int sz=s.size();
             return (s.substr(0,4)==s.substr(sz-4,4));
-        }
-        rval suc(){ return {rarity_d,description,success}; }
-    }
-    namespace c_pair1{
-        const ld rarity_d=0.831429;
-        string description="一对个位数";
-        const string success="可以找出起点不同数一样的个位数";
-        const int pw[6]={1,10,100,1000,10000,100000};
-        bool ck(int x){
-            if(!~x) return false;
-            int sz=log10(x);
-            for(int i = 0;i<=sz;++i)
-                for(int j = i+1;j<=sz;++j)
-                    if(x/pw[i]%10==x/pw[j]%10) return 1;
-            return 0;
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
@@ -2312,7 +2297,7 @@ namespace F{ // 成就计算区
     namespace c_brother_xaabbx{
         const ld rarity_d=0.009090;
         string description="/aabb\\";
-        const string success="正中间形如 aabb";
+        const string success="一个四或六位数的正中间形如 aabb";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -2339,7 +2324,7 @@ namespace F{ // 成就计算区
     namespace c_brother_xababx{
         const ld rarity_d=0.009090;
         string description="/abab\\";
-        const string success="正中间形如 abab";
+        const string success="一个四或六位数的正中间形如 abab";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -2353,7 +2338,7 @@ namespace F{ // 成就计算区
     namespace c_brother_aabbcc{
         const ld rarity_d=0.000900;
         string description="/aabbcc\\";
-        const string success="整体形如 aabbcc";
+        const string success="一个六位数整体形如 aabbcc";
         bool ck(int x){
             if(!~x||x<100000) return false;
             const string s=to_string(x);
@@ -2364,11 +2349,26 @@ namespace F{ // 成就计算区
     namespace c_brother_ababab{
         const ld rarity_d=0.000090;
         string description="/ababab\\";
-        const string success="整体形如 ababab";
+        const string success="一个六位数整体形如 ababab";
         bool ck(int x){
             if(!~x||x<100000) return false;
             const string s=to_string(x);
             return (s[0]==s[2]&&s[2]==s[4]&&s[1]==s[3]&&s[3]==s[5]);
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_pair1{
+        const ld rarity_d=0.831429;
+        string description="一对个位数";
+        const string success="可以找出起点不同数一样的个位数";
+        const int pw[6]={1,10,100,1000,10000,100000};
+        bool ck(int x){
+            if(!~x) return false;
+            int sz=log10(x);
+            for(int i = 0;i<=sz;++i)
+                for(int j = i+1;j<=sz;++j)
+                    if(x/pw[i]%10==x/pw[j]%10) return 1;
+            return 0;
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
@@ -2496,6 +2496,12 @@ namespace F{ // 成就计算区
 			accom.push_back(c_42::suc());
 		if(flag_spoof||c_420::ck(global))
 			accom.push_back(c_420::suc());
+		if(flag_spoof||c_1024::ck(global))
+			accom.push_back(c_1024::suc());
+		if(flag_spoof||c_2048::ck(global))
+			accom.push_back(c_2048::suc());
+		if(flag_spoof||c_4096::ck(global))
+			accom.push_back(c_4096::suc());
         
 		if(flag_xxx||c_666::ck(global))
 			accom.push_back(c_666::suc());	
@@ -2703,6 +2709,8 @@ namespace F{ // 成就计算区
             accom.push_back(c_square::suc());
         if(flag_power||c_cubed::ck(global))
             accom.push_back(c_cubed::suc());
+        if(flag_power||c_4_power::ck(global))
+            accom.push_back(c_4_power::suc());
         if(flag_power||c_5_power::ck(global))
             accom.push_back(c_5_power::suc());
         if(flag_power||c_6_power::ck(global))
@@ -2781,7 +2789,7 @@ namespace F{ // 成就计算区
 			accom.push_back(c_equation_rev::suc());
             
 		if(flag_brother||c_brother_aabb::ck(global))
-			accom.push_back(c_brother_xaabbx::suc());
+			accom.push_back(c_brother_aabb::suc());
 		if(flag_brother||c_brother_xaabbx::ck(global))
 			accom.push_back(c_brother_xaabbx::suc());
 		if(flag_brother||c_brother_abab::ck(global))
@@ -2792,6 +2800,8 @@ namespace F{ // 成就计算区
 			accom.push_back(c_brother_aabbcc::suc());
 		if(flag_brother||c_brother_ababab::ck(global))
 			accom.push_back(c_brother_ababab::suc());
+		if(flag_brother||c_pair1::ck(global))
+			accom.push_back(c_pair1::suc());
 		if(flag_brother||c_pair2::ck(global))
 			accom.push_back(c_pair2::suc());
 		if(flag_brother||c_pair3::ck(global))
@@ -2864,6 +2874,8 @@ namespace F{ // 成就计算区
         flag_equation=0;
         flag_brother=1; workAccom(22,"多组相同的的");
         flag_brother=0;
+        flag_important_days=1; workAccom(23,"重要日期");
+        flag_important_days=0;
         return;
     }
 }
