@@ -10,12 +10,37 @@
 #define se second
 #define cls() system("cls")
 #define isOnEnter ((GetAsyncKeyState(VK_RETURN)&0x8000))
+#define isOnT ((GetAsyncKeyState(84)&0x8000))
+#define isOnB ((GetAsyncKeyState(66)&0x8000))
 
-// #define showRankOfNumber 0
-// #define usePublicHandle 0
-#define accomSearcher 0
+// #define showRankOfNumber TEST_ON
+// #define usePublicHandle TEST_ON
+// #define BAGTEST TEST_ON
+
+#define accomSearcher PLUGIN_ON
 
 using namespace std;
+
+pair<string,string> updateList_FishRNG_CPP[]={
+	{"v2.0.5","可以通过一些特殊的语法渲染字符串，放到了测试器当中"},
+	{"v2.0.4","加了一个功能就是按 T 跳过动画，给一些位置加了总数显示"},
+	{"v2.0.3","修了一些显示的 bug，具体化了成就可视化工具"},
+	{"v2.0.2","修了一些虚拟测试的 bug，加了更新日志"},
+	{"v2.0.1","给虚拟测试增加一个小功能就是抽取到 <1% 时锁住（改成 N 解锁）"},
+	{"v2.0.0","增加测试器（日志有点累了没写）"},
+	{"v1.1.0","增加了日志功能，当然只是一个空壳"},
+	{"v1.0.9","把 Common 的范围从 >=50% 变成了 40%"},
+	{"v1.0.8","修复了一些已知问题（预处理的顺序有问题）"},
+	{"v1.0.7","给筛选器加了排名功能以方便显示一个类别内有多少个元素"},
+	{"v1.0.6","增加了筛选器功能，可以筛选成就类别然后显示筛选出来的成就"},
+	{"v1.0.5","给加速的范围稍微调了一下，顺便关掉了账号功能"},
+	{"v1.0.4","成就显示器已经写好了，虽然看起来很简陋"},
+	{"v1.0.3","现在抽取界面完全没有问题了，挖了一个有关显示全部成就的坑"},
+	{"v1.0.2","大改了一遍显示终端，保证显示不会溢出错乱"},
+	{"v1.0.1","稍微改了一下界面的显示，增加了账号的 Todo List"},
+	{"v1.0.0","第一次公开测试版本"},
+	{"end","end"}
+};
 
 namespace P{ // 输出区
 	HANDLE _handle=GetStdHandle(STD_OUTPUT_HANDLE); 
@@ -90,6 +115,43 @@ namespace P{ // 输出区
 	    cursorInfo.bVisible=FALSE;
 	    SetConsoleCursorInfo(hConsole,&cursorInfo);
 	}
+	void ShowCursor(){
+	    HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
+		#ifdef usePublicHandle
+			hConsole=_handle;
+		#endif
+	    CONSOLE_CURSOR_INFO cursorInfo;
+	    GetConsoleCursorInfo(hConsole,&cursorInfo);
+	    cursorInfo.bVisible=TRUE;
+	    SetConsoleCursorInfo(hConsole,&cursorInfo);
+	}
+	void colorString(string s,int preColor){ // 使用特殊构造输出
+	
+		// this is a sentence <col>exist a color</col>, or <ful>like this</ful>.
+		// <cy>can't</cy> <cg>receive</cg> <fg>Chinese</fg> <cb>Character</cb> <fb>!!!<f/b> <fy>NOOOOOOOOOOO</fy>
+		
+		bool isOp=0;
+		string inside="";
+		col();
+		for(auto v:s){
+			if(v=='<'){
+				isOp=1;
+			}else if(v=='>'){
+				if(inside[0]=='/') col();
+				else if(inside=="col") col(preColor);
+				else if(inside=="ful") col(preColor*16+((preColor==10||preColor==11||preColor==14||preColor==15)?0:7));
+				else if(inside=="cg") col(10);
+				else if(inside=="fg") col(10*16);
+				else if(inside=="cb") col(9);
+				else if(inside=="fb") col(9*16+7);
+				else if(inside=="cy") col(14);
+				else if(inside=="fy") col(14*16);
+				inside=""; isOp=0;
+			}else if(isOp) inside+=v;
+			else cout<<v;
+		}
+		col();
+	}
 }
 namespace T{ // 测试区
 	int Dice=-1;
@@ -111,6 +173,7 @@ namespace M{
 	// ------------------- 不同页面运行分装 -------------------
 	string timeOfConfig;
 	vector<pair<ll,int>> numList;
+	vector<pair<string,string>> updateList[2]; // {F.h, FishRNG.cpp}
 	map<int,pair<ld,int>> rarityRankColor; // {Number, {Rank, ColorOfNumber}}
 	ifstream Config("config.txt");
 	vector<pair<int,string>> accomShown;
@@ -126,8 +189,27 @@ namespace M{
 	}
 	/* 初始化：加载显示 */ void main_LoadShow(){
 		col(9); 
-		cout<<"FishRNG"; 
-		col(); 
+		cout<<"FishRNG ";
+		setPosition(28,0);
+		col();
+		cout<<" 版本提示";
+		col(9);
+		cout<<" @FishRNG";
+		col();
+		cout<<" [";
+		col(15);
+		cout<<" 主程序 ";
+		col(11);
+		cout<<updateList_FishRNG_CPP[0].fi;
+		col(14);
+		cout<<" | ";
+		col(15);
+		cout<<"成就安装包 ";
+		col(12);
+		cout<<"v"<<updateList_F_H[0].fi;
+		col();
+		cout<<" ]";
+		setPosition(0,0);
 		cout<<"\n\n";
 		Config>>timeOfConfig;
 		col(14); 
@@ -306,7 +388,18 @@ namespace M{
 			for(int i=0;i<=999999;i++) printC<<rarityRankColor[i].fi<<" "<<rarityRankColor[i].se<<"\n";
 		}
 	}
-
+	/* 初始化：更新记录 */ void main_InitVersionList(){
+		for(int i=0;;i++){
+			if(updateList_F_H[i].fi=="end"&&updateList_F_H[i].se=="end") break;
+			updateList[0].push_back(updateList_F_H[i]);
+		}
+		for(int i=0;;i++){
+			if(updateList_FishRNG_CPP[i].fi=="end"&&updateList_FishRNG_CPP[i].se=="end") break;
+			updateList[1].push_back(updateList_FishRNG_CPP[i]);
+		}
+		return;
+	}
+	
 	/* 循环：主界面     */ void loop_PreShow(){
 		cls(); 
 		col(9); cout<<"FishRNG"; col(); cout<<"\n";
@@ -352,8 +445,28 @@ namespace M{
 		col(14); cout<<" - [ "; col(8);  cout<<"空格键 "; col(); cout<<"- 设置                         "; col(14); cout<<" ]"; col(); cout<<"\n";
 		col(14); cout<<" - [ "; col(3);  cout<<"A 键   "; col(); cout<<"- 打开账号相关信息             "; col(14); cout<<" ]"; col(); cout<<"\n";
 		col(14); cout<<" - [ "; col(12);  cout<<"E 键   "; col(); cout<<"- 打开成就相关信息             "; col(14); cout<<" ]"; col(); cout<<"\n";
+		col(14); cout<<" - [ "; col(13);  cout<<"V 键   "; col(); cout<<"- 打开测试与版本信息           "; col(14); cout<<" ]"; col(); cout<<"\n";
 		col(14); cout<<" - [ "; col(11); cout<<"任意键 "; col(); cout<<"- 抽取数字                     "; col(14); cout<<" ]"; col(); cout<<"\n";
-		cout<<"\n";		
+		cout<<"\n";	
+		setPosition(28,0);
+		col();
+		cout<<" 版本提示";
+		col(9);
+		cout<<" @FishRNG";
+		col();
+		cout<<" [";
+		col(15);
+		cout<<" 主程序 ";
+		col(11);
+		cout<<updateList_FishRNG_CPP[0].fi;
+		col(14);
+		cout<<" | ";
+		col(15);
+		cout<<"成就安装包 ";
+		col(12);
+		cout<<"v"<<updateList_F_H[0].fi;
+		col();
+		cout<<" ]";	
 	}
 	double printSpeed=1;
 	bool showInt=0;
@@ -370,8 +483,8 @@ namespace M{
 		cout<<"\n";
 		col(14); cout<<" - 概率自动取整输出："; col((showInt?10:12)); cout<<(showInt?"ON":"OFF"); col(11); cout<<" + -    "; col(); cout<<"\n";
 		cout<<"\n";
+		setPosition(28,0);	
 		col(11); cout<<" [ --- 按下 B 键返回 --- ]"; col(); cout<<"\n";
-		cout<<"\n";
 		// ------------------- 页面内等待操作 -------------------
 		int keyboardSet=getch();
 		if(keyboardSet==224){
@@ -394,6 +507,361 @@ namespace M{
 		}else if(keyboardSet==98) return;
 		goto setting;
 	}	
+	/* 循环：测试器     */ void loop_Tester(){
+		cls();
+		tester:;
+		int showMode=0;
+		bool needCLS=0;
+		bool readMode=0;
+		string stringInt;
+		ReshowTester:;
+		if(needCLS){ cls(); needCLS=0; }
+		setPosition(0,0);
+		col(9); cout<<"FishRNG"; col(); cout<<"\n";
+		cout<<"\n";
+		col(8);	cout<<" # 测试以及记录界面"; col(); cout<<"\n\n";		
+		setPosition(28,0);	
+		col(11); cout<<" [ --- 按下 B 键返回 --- ]"; col(); cout<<"\n";
+		setPosition(2,0);
+		if(showMode==0){
+			col(8); cout<<" - 上下滚动来显示全部的"; col(12); cout<<" F.h "; col(8); cout<<"更新日志\n"; col();
+		}else if(showMode==1){
+			col(8); cout<<" - 上下滚动来显示全部的"; col(11); cout<<" FishRNG.cpp "; col(8); cout<<"更新日志\n"; col();
+		}else if(showMode==2){
+			col(8); cout<<" - 按下"; col(11); cout<<" [I] "; col(8); cout<<"重新输入你测试的数字\n"; col();
+		}else{
+			col(8); cout<<" - 按下"; col(11); cout<<" [Enter] "; col(8); cout<<"渲染字符串 / 重新输入字符串\n"; col();
+		}
+		setPosition(2,50);
+		col(11); cout<<" [M] "; col(9); cout<<"显示模式: ";
+		if(showMode==0) col(12);
+		else if(showMode==1) col(11);
+		else if(showMode==2) col(10);
+		else col(14);
+		if(showMode==0) cout<<"[F.h 更新日志]";
+		else if(showMode==1) cout<<"[FishRNG.cpp 更新日志]";
+		else if(showMode==2) cout<<"[虚拟抽取测试]";
+		else cout<<"[渲染字符串测试]";
+		col();
+		if(showMode==0||showMode==1){
+			int totalLine=updateList[showMode].size();
+			int frontPlace=0, nowBegin=0;
+			int backPlace=max(0,totalLine-11);
+			ReshowUpdateList:;
+			setPosition(4,0);
+			col(8);
+			cout<<" - 滚动以显示历史成就，越上方的是越新的版本（共 ";
+			col(10);
+			cout<<totalLine;
+			col(8);
+			cout<<" 条日志）\n";
+			col();
+			for(int i=nowBegin;i<=min(nowBegin+10,totalLine-1);i++){
+				int lineNumber=6+2*(i-nowBegin);
+				setPosition(lineNumber,0); 
+				col((showMode==0)?4:3);
+				cout<<" - [ "; 
+				col((showMode==0)?12:11); 
+				if(showMode==0) cout<<"v"; 
+				cout<<updateList[showMode][i].fi; col((showMode==0)?4:3); cout<<" ]";
+				col((showMode==0)?4:3); cout<<" [ ";
+				col(7);
+				cout<<updateList[showMode][i].se; 
+				col((showMode==0)?4:3); cout<<" ]                                  ";
+				cout<<"\n";
+				cout<<"      ";
+				cout<<"                                   ";
+				col();
+				if(i==nowBegin){
+					setPosition(lineNumber-2,75);
+					col((nowBegin!=0)?10:8);
+					cout<<" [↑]";
+					col((nowBegin!=backPlace)?10:8);
+					cout<<" [↓]";
+					col();
+				}
+			}
+			UpdateRetry:;	
+			int keyboardSet=getch();
+			if(keyboardSet==224){
+				keyboardSet=getch(); // 注意上下左右有两次操作
+				if(keyboardSet==72){
+					if(nowBegin==0) goto UpdateRetry;
+					nowBegin--;
+					nowBegin=max(nowBegin,0);
+					goto ReshowUpdateList;
+				}else if(keyboardSet==80){
+					if(nowBegin==backPlace) goto UpdateRetry;
+					nowBegin++;
+					nowBegin=min(nowBegin,backPlace);
+					goto ReshowUpdateList;
+				}
+			}else if(keyboardSet==119){
+				if(nowBegin==0) goto UpdateRetry;
+				nowBegin--;
+				nowBegin=max(nowBegin,0);
+				goto ReshowUpdateList;				
+			}else if(keyboardSet==115){
+				if(nowBegin==backPlace) goto UpdateRetry;
+				nowBegin++;
+				nowBegin=min(nowBegin,backPlace);
+				goto ReshowUpdateList;				
+			}else if(keyboardSet==109){
+				showMode++;
+				showMode%=4;
+				needCLS=1;
+				readMode=0;
+				Dice=-1;
+				goto ReshowTester;
+			}else if(keyboardSet==98){
+				Dice=-1;
+				return;
+			}
+		}else if(showMode==3){
+			ReshowColorString:;
+			setPosition(4,0);
+			col(3);
+			cout<<"----------------------------------------------------------------------\n\n";
+			col(14);
+			cout<<" - 在这里键入你的输入字符串";
+			col(8);
+			cout<<" \n\n （按下 "; col(11); cout<<"[Enter]"; col(8); cout<<" 打开输入）";
+			setPosition(16,0);
+			col(3);
+			cout<<"----------------------------------------------------------------------\n\n";
+			col(14);
+			cout<<" - 渲染后的字符串";
+			col();
+			setPosition(8,0);
+			col();
+			if(readMode){
+				ShowCursor();
+				cout<<" >>> ";
+				col(8*16+7);
+				cout<<"________________________________________________________";
+				setPosition(8,5);
+				string ShowString;
+				getline(cin,ShowString);
+				getline(cin,ShowString);
+				col(10);
+				cout<<"\n- 输入渲染主题色 \n\n";
+				col();
+				int preColor=0;
+				cout<<" >>> ";
+				col(8*16+7);
+				cout<<"__";
+				setPosition(12,5);
+				cin>>preColor;
+				setPosition(20,0);
+				col(10);
+				cout<<" >>> ";
+				colorString(ShowString,preColor);
+				HideCursor();
+			}
+			RetryColorString:;
+			int keyboardSet=getch();
+			if(keyboardSet==13){ needCLS=1; readMode=!readMode; goto ReshowTester; }
+			else if(keyboardSet==109){
+				showMode++;
+				showMode%=4;
+				needCLS=1;
+				readMode=0;
+				Dice=-1;
+				goto ReshowTester;
+			}else if(keyboardSet==98)
+				return;
+			goto RetryColorString;
+		}else if(showMode==2){
+			int result=(Dice==-1?fishRand(rander):Dice);
+			string stringResult=to_string(result); 
+			global=result;
+			while(stringResult.size()!=6) stringResult=" "+stringResult; // 补足六位数
+			// ------------------- 分析数字 -------------------
+			setPosition(6,0); cout<<"                                         "; col(); cout<<"\n";
+			accom.clear();
+			make_check();
+			sort(accom.begin(),accom.end(),rarity_cmp);
+			// ------------------- 成就渲染 -------------------
+			ll sumScore=0;
+			for(auto v:accom)
+				sumScore+=(v.c==0?(ll)(1000/v.r):v.c);
+			// ------------------- 结束数字颜色变动 -------------------
+			setPosition(4,0);
+			col(8);
+			cout<<" - 测试的数字：";
+			int resultLvl=rarityRankColor[result].se; 
+			col(resultLvl);
+			cout<<" [ "; 
+			for(int i=0;i<6;i++)
+				cout<<stringResult[i]<<" ";
+			cout<<"]";
+			col();
+			cout<<" - 数字等级：";
+			col(resultLvl);
+			cout<<"["; cout<<rarityColorIDChinese[resultLvl]; cout<<"]"; 
+			col(); 
+			cout<<" TOP ";
+			col(resultLvl); cout<<(showInt?((int)rarityRankColor[result].fi):(rarityRankColor[result].fi))<<"%";
+			col(); cout<<"（并列）"; 
+			cout<<"                                          \n";
+			int backPlace=accom.size(), frontPlace=max(backPlace-5,0);
+			setPosition(6,0);
+			col(14); cout<<"你所得到积分："; col(10);
+			string jnum=to_string(sumScore);
+			int k=0, sz=jnum.size();
+			for(auto v:jnum){
+				if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
+				cout<<v;
+				++k;
+			}
+			col(8); cout<<"（滚动显示已折叠成就，共 "; col(10); cout<<accom.size(); col(8); cout<<" 个成就）                       \n"; col();
+			int nowBegin=0;
+			Reshow:;
+			for(int i=backPlace-nowBegin-1;i;i=0){
+				int lastAccom=i, nowShow=0;
+				// ------------------- 重新渲染成就 -------------------
+				for(auto v:accom){ 
+					if(nowShow>i-5){
+						bool firShow=(lastAccom==0);
+						int lineNumber=8+4*lastAccom;
+						setPosition(lineNumber,0); 
+						col(14);
+						cout<<"  -   ";
+						col(doubleToColorID(v.r));
+						cout<<"["; cout<<rarityColorIDChinese[doubleToColorID(v.r)]; cout<<"]";
+						col(14);
+						cout<<" [ ";
+						col(doubleToColorID(v.r));
+						cout<<v.d; 
+						col(14); 
+						cout<<" ]                                                     ";
+						cout<<"\n";
+						col(8);
+						cout<<"  -   ";
+						cout<<v.s<<"                                                                     ";
+						setPosition(lineNumber,75);
+						col(10);
+						cout<<" +";
+						string jnum=to_string((v.c==0?(ll)(1000/v.r):v.c));
+						int k=0, sz=jnum.size();
+						for(auto v:jnum){
+							if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
+							cout<<v;
+							++k;
+						}
+						cout<<"                      \n";
+						col(2);
+						setPosition(lineNumber+1,75);
+						cout<<" "<<(showInt?((int)(v.r*100)):(v.r*100))<<"%                           "; 
+						cout<<"\n";
+						col();
+						if(firShow){
+							setPosition(lineNumber-2,75);
+							col((nowBegin!=0)?10:8);
+							cout<<" [↑]";
+							col((nowBegin!=frontPlace)?10:8);
+							cout<<" [↓]";
+							col();
+						}
+					}
+					lastAccom--;
+					if(lastAccom<0) break;
+					nowShow++;
+				}
+			}		
+			double nowRarity=rarityRankColor[result].fi;
+			setPosition(28,0);	
+			if(nowRarity>1){
+				col(11); cout<<" [ --- 按下 B 键刷新 --- ]"; col(); cout<<"\n";
+			}else{
+				col(6); cout<<" [ --- 按下 N 键刷新 --- ]"; col(); cout<<"\n";
+			}
+			ReshowRetry:;	
+			int keyboardSet=getch();
+			if(keyboardSet==224){
+				keyboardSet=getch(); // 注意上下左右有两次操作
+				if(keyboardSet==72){
+					if(nowBegin==0) goto ReshowRetry;
+					nowBegin--;
+					nowBegin=max(nowBegin,0);
+					goto Reshow;
+				}else if(keyboardSet==80){
+					if(nowBegin==frontPlace) goto ReshowRetry;
+					nowBegin++;
+					nowBegin=min(nowBegin,frontPlace);
+					goto Reshow;
+				}
+			}else if(keyboardSet==119){
+				if(nowBegin==0) goto ReshowRetry;
+				nowBegin--;
+				nowBegin=max(nowBegin,0);
+				goto Reshow;				
+			}else if(keyboardSet==115){
+				if(nowBegin==frontPlace) goto ReshowRetry;
+				nowBegin++;
+				nowBegin=min(nowBegin,frontPlace);
+				goto Reshow;				
+			}else if(
+				(keyboardSet==98&&(nowRarity>1))||
+				(keyboardSet==110&&(nowRarity<=1))
+			)
+				goto ReshowTester;
+			else if(keyboardSet==109){
+				showMode++;
+				showMode%=4;
+				needCLS=1;
+				readMode=0;
+				Dice=-1;
+				goto ReshowTester;
+			}else if(keyboardSet==105&&showMode==2){
+				readTestIntInside:;
+				setPosition(6,0);
+				cout<<" - 请输入你的测试数字（0~999999）：";
+				col(8*16+15);
+				cout<<"______";
+				col();
+				cout<<"                                                         \n"; 
+				setPosition(6,0);
+				col(6); cout<<" - 请输入你的测试数字（0~999999）："; col(8*16+15);
+				cin>>stringInt; col();
+				bool isint=(stringInt.size()<=6);
+				for(auto v:stringInt) if(!isdigit(v)) isint=0;
+				if(!isint) goto readTestIntInside;
+				Dice=stoi(stringInt);
+				needCLS=1;
+				goto ReshowTester;
+			}
+			goto ReshowRetry;			
+		}
+		// ------------------- 等待用户操作 -------------------
+		TesterRetry:;
+		int keyboardSet=getch();
+		// ------------------- 页面内等待操作 -------------------
+		if(keyboardSet==109){
+			showMode++;
+			showMode%=4; 
+			needCLS=1;
+			Dice=-1;
+			goto ReshowTester;
+		}else if(keyboardSet==105&&showMode==2){
+			readTestInt:;
+			setPosition(6,0);
+			cout<<" - 请输入你的测试数字（0~999999）：                 "; 
+			setPosition(6,0);
+			col(6); cout<<" - 请输入你的测试数字（0~999999）："; col();
+			cin>>stringInt;
+			bool isint=(stringInt.size()<=6);
+			for(auto v:stringInt) if(!isdigit(v)) isint=0;
+			if(!isint) goto readTestInt;
+			Dice=stoi(stringInt);
+			needCLS=1;
+			goto ReshowTester;
+		}else if(keyboardSet==98){
+			Dice=-1;
+			return;
+		}
+		goto TesterRetry;
+	}
 	string userName;
 	vector<int> usedNumber;
 	/* 循环：账号       */ void loop_Account(){ // 账号界面（未完善）
@@ -414,6 +882,7 @@ namespace M{
 			col(14); cout<<" - 检测到的用户："; col(10); cout<<readName;   col(); cout<<"\n";
 		}
 		cout<<"\n";
+		setPosition(28,0);	
 		col(11); cout<<" [ --- 按下 B 键返回 --- ]"; col(); cout<<"\n";
 		// ------------------- 页面内等待操作 -------------------
 		int keyboardLogin=getch();
@@ -433,6 +902,7 @@ namespace M{
 			col(14); cout<<" - 目前使用用户："; col(0); cout<<userName;   col(); cout<<"\n";
 		}
 		cout<<"\n";
+		setPosition(28,0);	
 		col(11); cout<<" [ --- 按下 B 键返回 --- ]"; col(); cout<<"\n";
 		// ------------------- 页面内等待操作 -------------------
 		int keyboardLogout=getch();
@@ -487,13 +957,29 @@ namespace M{
 			frontPlace=max(0,backPlace-5);
 			setPosition(6,0);
 			col(14);
-			if(nowShowAccom!=TYPES)
-				cout<<nowShowAccom+1<<". "<<accomName[nowShowAccom]<<"                         \n";
-			else{
+			if(nowShowAccom!=TYPES){
+				cout<<nowShowAccom+1<<". "<<accomName[nowShowAccom];
+				col(8);
+				cout<<"（共 ";
+				col(10);
+				cout<<backPlace;
+				col(8);
+				cout<<" 个成就）";
+				col(14);
+				cout<<"                         \n";
+			}else{
 				col(11);
 				cout<<"[Filter] ";
 				col(14);
-				cout<<accomName[nowShowAccom]<<"                         \n";
+				cout<<accomName[nowShowAccom];
+				col(8);
+				cout<<"（共 ";
+				col(10);
+				cout<<backPlace;
+				col(8);
+				cout<<" 个成就）";
+				col(14);
+				cout<<"                         \n";
 			}
 			for(int i=0;i<5;i++)                 
 				setPosition(8+4*i,0),  cout<<"                                                                                                                    ",
@@ -744,7 +1230,9 @@ namespace M{
 		while(stringResult.size()!=6) stringResult=" "+stringResult; // 补足六位数
 		// ------------------- 随机动画渲染 -------------------
 		col(11); 
+		bool EndShow=0;
 		for(int i=0;i<6;i++){
+			if(isOnT){ EndShow=1; break; }
 			int showTime=500/printSpeed;
 			for(int j=0;j<=showTime;j++){
 				for(int k=i+1;k<6;k++){
@@ -753,6 +1241,7 @@ namespace M{
 					cout<<rand()%10;
 					col();
 				}
+				if(isOnT){ EndShow=1; break; }
 				if(j%20==0)
 					Sleep(50);
 				if(j<showTime&&j>showTime*0.75){
@@ -771,96 +1260,106 @@ namespace M{
 				}
 			}
 		}
-		// ------------------- 显示结果 -------------------
-		Sleep(500);
-		setPosition(4,0);
-		col(14); 
-		cout<<"你所抽中的数字是：";
-		col(); cout<<result<<"\n";
-		cout<<"\n";
-		col(11); cout<<" [ --- 按下任意键分析数字 --- ]"; col(); cout<<"\n";
-		cout<<"\n";
-		getch();
-		// ------------------- 分析数字 -------------------
-		setPosition(6,0); cout<<"                                         "; col(); cout<<"\n";
+		ll sumScore=0;
 		accom.clear();
 		make_check();
 		sort(accom.begin(),accom.end(),rarity_cmp);
-		// ------------------- 成就渲染 -------------------
-		ll sumScore=0;
-		for(int i=0;i<accom.size();i++){
-			int lastAccom=i, nowShow=0;
-			ll lastScore=sumScore;
-			sumScore=0;
-			bool zipped=0;
-			// ------------------- 重新渲染成就 -------------------
-			for(auto v:accom){ 
-				if(nowShow>i-5){
-					int lineNumber=8+4*lastAccom;
-					setPosition(lineNumber,0); 
-					col(14);
-					cout<<"  -   ";
-					col(doubleToColorID(v.r));
-					cout<<"["; cout<<rarityColorIDChinese[doubleToColorID(v.r)]; cout<<"]";
-					col(14);
-					cout<<" [ ";
-					col(doubleToColorID(v.r));
-					cout<<v.d; 
-					col(14); 
-					cout<<" ]                                                     ";
-					cout<<"\n";
-					col(8);
-					cout<<"  -   ";
-					cout<<v.s<<"                                                                     ";
-					setPosition(lineNumber,75);
-					col(10);
-					cout<<" +";
-					string jnum=to_string((v.c==0?(ll)(1000/v.r):v.c));
+		if(!EndShow){
+		// ------------------- 显示结果 -------------------
+			Sleep(500);
+			setPosition(4,0);
+			col(14); 
+			cout<<"你所抽中的数字是：";
+			col(); cout<<result<<"\n";
+			cout<<"\n";
+			col(11); cout<<" [ --- 按下任意键分析数字 --- ]"; col(); cout<<"\n";
+			cout<<"\n";
+			getch();
+			// ------------------- 分析数字 -------------------
+			setPosition(6,0); cout<<"                                         "; col(); cout<<"\n";
+			if(!isOnT){
+				// ------------------- 成就渲染 -------------------
+				for(int i=0;i<accom.size();i++){
+					int lastAccom=i, nowShow=0;
+					ll lastScore=sumScore;
+					sumScore=0;
+					bool zipped=0;
+					// ------------------- 重新渲染成就 -------------------
+					for(auto v:accom){ 
+						if(nowShow>i-5){
+							int lineNumber=8+4*lastAccom;
+							setPosition(lineNumber,0); 
+							col(14);
+							cout<<"  -   ";
+							col(doubleToColorID(v.r));
+							cout<<"["; cout<<rarityColorIDChinese[doubleToColorID(v.r)]; cout<<"]";
+							col(14);
+							cout<<" [ ";
+							col(doubleToColorID(v.r));
+							cout<<v.d; 
+							col(14); 
+							cout<<" ]                                                     ";
+							cout<<"\n";
+							col(8);
+							cout<<"  -   ";
+							cout<<v.s<<"                                                                     ";
+							setPosition(lineNumber,75);
+							col(10);
+							cout<<" +";
+							string jnum=to_string((v.c==0?(ll)(1000/v.r):v.c));
+							int k=0, sz=jnum.size();
+							for(auto v:jnum){
+								if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
+								cout<<v;
+								++k;
+							}
+							cout<<"                 \n";
+							col(2);
+							setPosition(lineNumber+1,75);
+							cout<<" "<<(showInt?((int)(v.r*100)):(v.r*100))<<"%                                   "; 
+							cout<<"\n";
+							col();
+						}else zipped=1;
+						sumScore+=(v.c==0?(ll)(1000/v.r):v.c);
+						lastAccom--;
+						if(lastAccom<0) break;
+						nowShow++;
+					}
+					// ------------------- 总分更新渲染 -------------------
+					for(ll j=lastScore;j<=sumScore;j+=(sumScore-lastScore+1)/(10000/printSpeed+1)+1){
+						if(isOnT){ EndShow=1; break; }
+						setPosition(6,0);
+						col(14); cout<<"你所得到积分："; col(10); 
+						string jnum=to_string(j);
+						int k=0, sz=jnum.size();
+						for(auto v:jnum){
+							if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
+							cout<<v;
+							++k;
+						}
+						if(!zipped){ cout<<"                                                                   \n"; col(); }
+						else{ col(8); cout<<"（已折叠 "<<i+1-5<<" 个成就）                       \n"; col(); } 
+					}
+					if(EndShow) break;
+					setPosition(6,0);
+					col(14); cout<<"你所得到积分："; col(10);
+					string jnum=to_string(sumScore);
 					int k=0, sz=jnum.size();
 					for(auto v:jnum){
 						if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
 						cout<<v;
 						++k;
 					}
-					cout<<"                 \n";
-					col(2);
-					setPosition(lineNumber+1,75);
-					cout<<" "<<(showInt?((int)(v.r*100)):(v.r*100))<<"%                                   "; 
-					cout<<"\n";
-					col();
-				}else zipped=1;
-				sumScore+=(v.c==0?(ll)(1000/v.r):v.c);
-				lastAccom--;
-				if(lastAccom<0) break;
-				nowShow++;
-			}
-			// ------------------- 总分更新渲染 -------------------
-			for(ll j=lastScore;j<=sumScore;j+=(sumScore-lastScore+1)/(10000/printSpeed+1)+1){
-				setPosition(6,0);
-				col(14); cout<<"你所得到积分："; col(10); 
-				string jnum=to_string(j);
-				int k=0, sz=jnum.size();
-				for(auto v:jnum){
-					if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
-					cout<<v;
-					++k;
+					if(!zipped){ cout<<"                                                                              \n"; col(); }
+					else{ col(8); cout<<"（已折叠 "<<i+1-5<<" 个成就）                       \n"; col(); } 
+					if(isOnT) break;
+					Sleep((1000/printSpeed+1));
 				}
-				if(!zipped){ cout<<"                                                                   \n"; col(); }
-				else{ col(8); cout<<"（已折叠 "<<i+1-5<<" 个成就）                       \n"; col(); } 
 			}
-			setPosition(6,0);
-			col(14); cout<<"你所得到积分："; col(10);
-			string jnum=to_string(sumScore);
-			int k=0, sz=jnum.size();
-			for(auto v:jnum){
-				if(k!=0&&k!=(sz-1)&&(sz-k)%3==0) cout<<",";
-				cout<<v;
-				++k;
-			}
-			if(!zipped){ cout<<"                                                                              \n"; col(); }
-			else{ col(8); cout<<"（已折叠 "<<i+1-5<<" 个成就）                       \n"; col(); } 
-			Sleep((1000/printSpeed+1));
 		}
+		sumScore=0;
+		for(auto v:accom)
+			sumScore+=(v.c==0?(ll)(1000/v.r):v.c);
 		// ------------------- 结束数字颜色变动 -------------------
 		setPosition(2,0);
 		int resultLvl=rarityRankColor[result].se; 
@@ -892,7 +1391,7 @@ namespace M{
 			cout<<v;
 			++k;
 		}
-		col(8); cout<<"（滚动显示已折叠成就）                       \n"; col();
+		col(8); cout<<"（滚动显示已折叠成就，共 "; col(10); cout<<accom.size(); col(8); cout<<" 个成就）                       \n"; col();
 		int nowBegin=0;
 		Reshow:;
 		for(int i=backPlace-nowBegin-1;i;i=0){
@@ -985,9 +1484,15 @@ int main(){
 	main_InitShow();
 	// -------------------     加载动画显示   -------------------
 	main_LoadShow();
-	// ------------------- 初始化成就分类系统 -------------------
+	// ------------------- 初始化不同分类系统 -------------------
 	main_InitAccomSearch();
 	main_InitNumberConfig();
+	main_InitVersionList();
+	// ----------- 测试包：保存基础显示功能下运行测试 -----------
+	#ifdef BAGTEST
+		loop_Tester();
+		return 0;
+	#endif
 	// -------------------     程序主循环     -------------------
 	while(1){
 		Sleep(50);
@@ -997,6 +1502,7 @@ int main(){
 		int keyboard=getch();
 		if(keyboard==32)       loop_Setting();
 		else if(keyboard==97)  loop_Account();
+		else if(keyboard==118) loop_Tester();
 		else if(keyboard==101) loop_ShowAccom();
 		else                   loop_Play();
 	}

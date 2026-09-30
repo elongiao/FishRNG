@@ -11,6 +11,20 @@
 using namespace std;
 
 namespace F{ // 成就计算区
+	/*
+		string visual;
+		
+		<col>成就原版颜色</col> 
+		<ful>成就高亮颜色</ful>
+		<cg>绿色</cg>
+		<fg>绿色</fg>
+		<cb>蓝色</cb>
+		<fb>蓝色</fb>
+		<cy>黄色</cy>
+		<fy>黄色</cy>
+		
+		4 5 <ful>0</ful> 1 6 5
+	*/
 	struct rval{ ld r; string d,s; ll c; };
     const int TYPES=24;
     bool flag_zero=0,flag_include_number=0,flag_spoof=0,flag_xxx=0,
@@ -19,11 +33,17 @@ namespace F{ // 成就计算区
     flag_odd_even=0,flag_special_kind=0,flag_digit_properties=0,flag_multiple=0,
     flag_power=0,flag_end_0=0,flag_end_5=0,flag_digit_size=0,flag_equation=0,
     flag_brother=0;
+    pair<string,string> updateList_F_H[]={
+        make_pair("2.0.1","补充了 3 个漏掉的成就和 same 的描述错误——2026/9/28"),
+        make_pair("2.0.0","我们拥有了更新日志和170+的成就！"),
+        make_pair("1.0.0","很久之前，首测共60+成就。"),
+        make_pair("end","end")
+    };
     //包含特殊数字
     namespace c_0{
 		const ld rarity_d=0.468559;
-		string description="虚无之数";
-		const string success="包含1个“0”";
+		string description="虚无之数",visaul="";
+		const string success="包含至少1个“0”";
 		bool ck(int x){
             if(!~x) return false;
 			while(x){
@@ -37,7 +57,7 @@ namespace F{ // 成就计算区
     namespace c_00{
 		const ld rarity_d=0.078282;
 		string description="虚无之数*2";
-		const string success="包含2个“0”";
+		const string success="包含至少2个“0”";
 		bool ck(int x){
             if(!~x) return false;
             int fl=0;
@@ -49,7 +69,7 @@ namespace F{ // 成就计算区
     namespace c_000{
 		const ld rarity_d=0.008046;
 		string description="虚无之数*3";
-		const string success="包含3个“0”";
+		const string success="包含至少3个“0”";
 		bool ck(int x){
             if(!~x) return false;
             int fl=0;
@@ -61,7 +81,7 @@ namespace F{ // 成就计算区
     namespace c_0000{
 		const ld rarity_d=0.000423;
 		string description="虚无之数*4";
-		const string success="包含4个“00”";
+		const string success="包含至少4个“0”";
 		bool ck(int x){
             if(!~x) return false;
             int fl=0;
@@ -73,7 +93,7 @@ namespace F{ // 成就计算区
     namespace c_00000{
 		const ld rarity_d=0.000009;
 		string description="虚无之数*5";
-		const string success="包含5个“00”";
+		const string success="包含至少5个“0”";
 		bool ck(int x){
             if(!~x) return false;
             int fl=0;
@@ -237,7 +257,7 @@ namespace F{ // 成就计算区
     }
 	namespace c_67{
 		const ld rarity_d=0.039700;
-		string description="676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767676767";
+		string description="67676767676767676767676767676767676767676767";
 		const string success="包含一个“67”";
 		bool ck(int x){
             if(!~x) return false;
@@ -247,7 +267,7 @@ namespace F{ // 成就计算区
 			return 0;
 		}
 		rval suc(){ return {rarity_d,description,success}; }
-	}
+    }
     namespace c_91{
         const ld rarity_d=0.039700;
         string description="互联网表层";
@@ -634,6 +654,19 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
+    namespace c_1145{
+        const ld rarity_d=0.000300;
+        string description="臭";
+        const string success="包含一个“1145”";
+        bool ck(int x){
+            if(!~x) return false;
+            const string s=to_string(x);
+            for(int i=3;i<(int)s.size();i++)
+                if(s[i-3]=='1'&&s[i-2]=='1'&&s[i-1]=='4'&&s[i]=='5') return 1;
+            return 0;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
     namespace c_114{
         const ld rarity_d=0.003700;
         string description="好臭（恼";
@@ -943,6 +976,32 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
+    namespace c_all_up{
+        const ld rarity_d=0.000466;
+        string description="从谷底开始的每一步都是上升";
+        const string success="所有数单调递增";
+        bool ck(int x){
+            if(!~x&&x<10) return false;
+            const string s=to_string(x);
+            for(int i = 1;i<s.size();++i)
+                if(s[i-1]>=s[i]) return 0;
+            return 1;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_all_down{
+        const ld rarity_d=0.000847;
+        string description="人生大起大落落落落落落落落";
+        const string success="所有数单调递减";
+        bool ck(int x){
+            if(!~x&&x<10) return false;
+            const string s=to_string(x);
+            for(int i = 1;i<s.size();++i)
+                if(s[i-1]<=s[i]) return 0;
+            return 1;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
     namespace c_Contiguous_segment{
         const ld rarity_d=0.004411;
         string description="骨肉相连";
@@ -1064,20 +1123,19 @@ namespace F{ // 成就计算区
     namespace c_five_same{
         const ld rarity_d=0.002700;
         string description="五连 诛天灭地";
-        const string success="有三个相同且相邻的数字";
+        const string success="有五个相同且相邻的数字";
         bool ck(int x){
-            if(!~x) return false;
+            if(!~x||x<10000) return false;
             const string s=to_string(x);
-            for(int i = 3;i<s.size();++i)
-                if(s[i-3]==s[i-2]&&s[i-2]==s[i-1]&&s[i-1]==s[i]) return 1;
-            return 0;
+            return (s[0]==s[1]&&s[1]==s[2]&&s[2]==s[3]&&s[3]==s[4])||
+                   (s[1]==s[2]&&s[2]==s[3]&&s[3]==s[4]&&s[4]==s[5]);
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
     namespace c_four_same{
         const ld rarity_d=0.002700;
         string description="四连 天下无敌";
-        const string success="有三个相同且相邻的数字";
+        const string success="有四个相同且相邻的数字";
         bool ck(int x){
             if(!~x) return false;
             const string s=to_string(x);
@@ -1256,7 +1314,7 @@ namespace F{ // 成就计算区
     namespace c_palindrome_5{
         const ld rarity_d=0.018810;
         string description="回文（5）";
-        const string success="存在长度为 3 的回文子串";
+        const string success="存在长度为 5 的回文子串";
         bool ck(int x){
             if(!~x||x<10000) return false;
             const string s=to_string(x);
@@ -1542,6 +1600,20 @@ namespace F{ // 成就计算区
             if(!~x) return false;
             while(x){
                 if(x%10%4) return 0;
+                x/=10;
+            }
+            return 1;
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
+    namespace c_number_pow2{
+        const ld rarity_d=0.000729;
+        string description="也算作二进制";
+        const string success="每一位数都是二的幂";
+        bool ck(int x){
+            if(!~x) return false;
+            while(x){
+                if(x&&x^2&&x^4&&x^8) return 0;
                 x/=10;
             }
             return 1;
@@ -2357,6 +2429,17 @@ namespace F{ // 成就计算区
         }
         rval suc(){ return {rarity_d,description,success}; }
     }
+    namespace c_brother_abbcca{
+        const ld rarity_d=0.000900;
+        string description="/abbcca\\";
+        const string success="一个六位数整体形如 abbcca";
+        bool ck(int x){
+            if(!~x||x<100000) return false;
+            const string s=to_string(x);
+            return (s[0]==s[5]&&s[1]==s[2]&&s[3]==s[4]);
+        }
+        rval suc(){ return {rarity_d,description,success}; }
+    }
     namespace c_pair1{
         const ld rarity_d=0.831429;
         string description="一对个位数";
@@ -2547,6 +2630,8 @@ namespace F{ // 成就计算区
             accom.push_back(c_114::suc());
         if(flag_homo||c_514::ck(global))
             accom.push_back(c_514::suc());
+        if(flag_homo||c_1145::ck(global))
+            accom.push_back(c_1145::suc());
         if(flag_homo||c_114514::ck(global))
             accom.push_back(c_114514::suc());
 
@@ -2651,6 +2736,10 @@ namespace F{ // 成就计算区
             accom.push_back(c_Continuous_sequence_u5::suc());
         if(flag_slope||c_Continuous_sequence_u6::ck(global))
             accom.push_back(c_Continuous_sequence_u6::suc());
+        if(flag_slope||c_all_up::ck(global))
+            accom.push_back(c_all_up::suc());
+        if(flag_slope||c_all_down::ck(global))
+            accom.push_back(c_all_down::suc());
         
         
         if(flag_odd_even||c_all_odd::ck(global))
@@ -2681,6 +2770,8 @@ namespace F{ // 成就计算区
             accom.push_back(c_number_div3::suc());
         if(flag_digit_properties||c_number_div4::ck(global))
             accom.push_back(c_number_div4::suc());
+        if(flag_digit_properties||c_number_pow2::ck(global))
+            accom.push_back(c_number_pow2::suc());
 
         if(flag_multiple||c_Multiple_2::ck(global))
             accom.push_back(c_Multiple_2::suc());
@@ -2800,6 +2891,8 @@ namespace F{ // 成就计算区
 			accom.push_back(c_brother_aabbcc::suc());
 		if(flag_brother||c_brother_ababab::ck(global))
 			accom.push_back(c_brother_ababab::suc());
+		if(flag_brother||c_brother_abbcca::ck(global))
+			accom.push_back(c_brother_abbcca::suc());
 		if(flag_brother||c_pair1::ck(global))
 			accom.push_back(c_pair1::suc());
 		if(flag_brother||c_pair2::ck(global))
